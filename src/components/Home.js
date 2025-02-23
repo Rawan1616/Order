@@ -1,24 +1,25 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import { Container, TextField, Button, Typography, Box, AppBar, Toolbar } from '@mui/material';
-import { PersonAdd as PersonAddIcon } from '@mui/icons-material';
+import { Login as LoginIcon } from '@mui/icons-material';
+// import './App.css';
 
-const SignUp = () => {
-  const [name, setName] = useState('');
+const Home = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [address, setAddress] = useState('');
   const navigate = useNavigate();
 
-  const handleSignUp = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://10.191.243.51:5000/api/signup', { name, email, password, address });
-      navigate('/login'); // Redirect to the login page
+      const response = await axios.post('http://10.191.243.51:5000/api/users/signin', { email, password }); // Ensure the correct API endpoint
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('items', JSON.parse(localStorage.getItem("items"))||[]);
+      navigate('/products'); // Redirect to the products page
     } catch (error) {
-      console.error('Error signing up:', error);
-      alert('Error signing up, please try again.');
+      console.error('Error logging in:', error);
+      alert('Invalid credentials, please try again.');
     }
   };
 
@@ -33,18 +34,9 @@ const SignUp = () => {
       </AppBar>
       <Box mt={4} p={3} boxShadow={3} borderRadius={2} bgcolor="white">
         <Typography variant="h4" component="h2" gutterBottom>
-          Sign Up
+          Welcome to the Order Management System
         </Typography>
-        <form onSubmit={handleSignUp}>
-          <TextField
-            label="Name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            fullWidth
-            margin="normal"
-            required
-          />
+        <form onSubmit={handleLogin}>
           <TextField
             label="Email"
             type="email"
@@ -63,26 +55,22 @@ const SignUp = () => {
             margin="normal"
             required
           />
-          <TextField
-            label="Address"
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            fullWidth
-            margin="normal"
-            required
-          />
           <Button
             type="submit"
             variant="contained"
             color="primary"
-            startIcon={<PersonAddIcon />}
+            startIcon={<LoginIcon />}
             fullWidth
             className="button"
           >
-            Sign Up
+            Login
           </Button>
         </form>
+        <Box mt={2} textAlign="center">
+          <Typography variant="body1">
+            Don't have an account? <Link to="/signup" className="link">Sign Up</Link>
+          </Typography>
+        </Box>
       </Box>
       <Box mt={4} textAlign="center" className="footer">
         <Typography variant="body2" color="textSecondary">
@@ -93,4 +81,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Home;

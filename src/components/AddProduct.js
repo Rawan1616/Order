@@ -35,7 +35,7 @@ function AddProduct() {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer YOUR_ACCESS_TOKEN`, 
+            Authorization:JSON.parse(localStorage.getItem("token")), 
           },
         }
       );
